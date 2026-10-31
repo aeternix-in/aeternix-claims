@@ -5,3 +5,5 @@ backend/data/
 web/dist/
 .env
 *.zip
+.vercel
+.env*
