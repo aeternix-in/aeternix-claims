@@ -1,0 +1,124 @@
+# =========================
+# Environment variables / secrets
+# =========================
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+.secret/
+
+# =========================
+# Python / FastAPI backend
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.python-version
+.venv/
+venv/
+ENV/
+env/
+pip-wheel-metadata/
+*.egg
+*.egg-info/
+.eggs/
+wheels/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.hypothesis/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# =========================
+# Local databases and runtime data
+# =========================
+*.db
+*.sqlite
+*.sqlite3
+data/*
+!data/.gitkeep
+backend/data/*
+!backend/data/.gitkeep
+uploads/
+storage/
+files/
+logs/
+*.log
+
+# =========================
+# Node / React / Vite frontend
+# =========================
+node_modules/
+web/node_modules/
+extension/node_modules/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+.npm/
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+.pnpm-store/
+dist/
+web/dist/
+build/
+web/build/
+.vite/
+*.tsbuildinfo
+
+# Keep dependency lockfiles tracked:
+# package-lock.json, pnpm-lock.yaml, yarn.lock
+
+# =========================
+# Browser tests / Playwright
+# =========================
+playwright-report/
+test-results/
+blob-report/
+.playwright/
+
+# =========================
+# Build / deployment artifacts
+# =========================
+.vercel/
+.netlify/
+coverage/
+.tmp/
+temp/
+
+# =========================
+# Editors / operating systems
+# =========================
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# =========================
+# Optional local tooling
+# =========================
+.cache/
+.pycache/
