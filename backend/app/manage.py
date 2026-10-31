@@ -72,6 +72,19 @@ def create_user(db, hospital_code: str | None, email: str, name: str, role: str,
     return u, pw
 
 
+def seed_demo_if_needed(db):
+    """Seed the synthetic demo hospital once per database.
+
+    Returns the seed result when created, or None when the DEMO hospital
+    already exists. The caller must set the cross-hospital scope first.
+    """
+    if db.query(Hospital).filter(Hospital.code == "DEMO").first():
+        return None
+
+    from .seed import seed
+    return seed(db)
+
+
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(prog="python -m app.manage")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -107,12 +120,11 @@ def main(argv: list[str] | None = None) -> None:
             if not a.password:
                 print(f"Password (shown once): {pw}")
         elif a.cmd == "seed-demo":
-            if db.query(Hospital).filter(Hospital.code == "DEMO").first():
+            out = seed_demo_if_needed(db)
+            if out is None:
                 print("Demo hospital already there; nothing to do.")
-                return
-            from .seed import seed
-            out = seed(db)
-            print(f"Seeded {out['cases']} synthetic cases. Password for the demo users: {out['password']}")
+            else:
+                print(f"Seeded {out['cases']} synthetic cases. Password for the demo users: {out['password']}")
     finally:
         db.close()
 
