@@ -11,13 +11,33 @@ from fastapi.staticfiles import StaticFiles
 
 from .api import routers
 from .config import settings
-from .db import init_db
+from .db import SessionLocal, init_db, scope_session
+from .models import Hospital
+
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    if not settings.demo_mode and settings.secret_key == "dev-insecure-change-me":
+    if not settings.demo_mode and settings.secret_key == "t-7Ly1qNj92g4qKpHr4OFlamrg8Z9oMqvwyS2Ib-baibeuhUj8W4R8IrXGoVXg5M":
         raise RuntimeError("Set SECRET_KEY before running with DEMO_MODE off: sign-in tokens are signed with it.")
+
     init_db()
+
+    # Create synthetic demo data on first startup when DEMO_MODE is enabled.
+    # This is idempotent per database: an existing DEMO hospital is left alone.
+    if settings.demo_mode:
+        db = SessionLocal()
+        try:
+            scope_session(db, None, bypass=True)
+            demo_exists = db.query(Hospital).filter(Hospital.code == "DEMO").first()
+            if not demo_exists:
+                from .seed import seed
+
+                # Skip sample document generation on serverless startup to keep
+                # cold starts lighter. Cases, users, payers and bank data are seeded.
+                seed(db, with_documents=False)
+        finally:
+            db.close()
+
     yield
 
 
