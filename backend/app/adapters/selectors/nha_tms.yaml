@@ -1,0 +1,28 @@
+# NHA TMS 2.0 provider portal — used for CGHS pensioner bills and PM-JAY claims.
+# STATUS: NOT CAPTURED. The selectors below are empty on purpose: they can only be read
+# from a logged-in desk session. Follow docs/ADAPTERS.md, fill them in, set status: ready.
+# Until then the extension shows "This portal is not set up yet" and does nothing on the page.
+portal: nha_tms
+name: NHA TMS 2.0
+status: not_captured
+match: ["https://provider.nha.gov.in/*"]
+pages:
+  claim_list:
+    url_contains: null
+    row: null
+    cells:
+      portal_ref: null
+      status_text: null
+      approved_amount: null
+      deduction_amount: null
+      payment_ref: null
+      payment_date: null
+      query_text: null
+  claim_form:
+    url_contains: null
+    fields: {}
+    uploads: {}
+    submit_button: null
+  confirmation:
+    url_contains: null
+    portal_ref: null

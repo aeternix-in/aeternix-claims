@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aeternix claims desk settings</title>
+<link rel="stylesheet" href="page.css">
+<style> main { max-width: 640px; margin: 0 auto; padding: 32px 16px 48px; } </style>
+</head>
+<body>
+<main>
+  <h1>Claims desk extension</h1>
+  <p class="muted">Reads claim status from payer portals into Aeternix and fills claim forms from Aeternix.
+     It never presses Submit: a person on the desk does that.</p>
+
+  <section id="signin">
+    <h2>Sign in to Aeternix</h2>
+    <form id="signinForm">
+      <label>Aeternix address<input type="url" id="backend" required></label>
+      <label>Email<input type="email" id="email" autocomplete="username" required></label>
+      <label>Password<input type="password" id="password" autocomplete="current-password" required></label>
+      <p class="err" id="signinErr" role="alert"></p>
+      <button class="primary" id="signinBtn">Sign in</button>
+    </form>
+  </section>
+
+  <section id="account" hidden>
+    <h2>Signed in</h2>
+    <p id="who"></p>
+    <label id="hospitalWrap" hidden>Hospital<select id="hospital"></select></label>
+    <label class="check"><input type="checkbox" id="autoRead"> Read claim lists into Aeternix as soon as they open</label>
+    <p><button class="link" id="signout">Sign out</button></p>
+  </section>
+
+  <section id="portals" hidden>
+    <h2>Portals</h2>
+    <p class="muted small">Only portals whose page selectors have been captured can be used. The others do nothing until
+       someone captures them from a signed-in desk session (docs/ADAPTERS.md in the Aeternix repo).</p>
+    <table>
+      <thead><tr><th>Portal</th><th>Set up</th><th>Access</th></tr></thead>
+      <tbody id="portalRows"></tbody>
+    </table>
+    <p class="err" id="portalErr" role="alert"></p>
+    <p><button id="refresh">Refresh from Aeternix</button></p>
+  </section>
+</main>
+<script type="module" src="options.js"></script>
+</body>
+</html>

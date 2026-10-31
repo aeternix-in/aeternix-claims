@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claim list - Mock payer portal</title>
+<link rel="stylesheet" href="portal.css">
+<script src="portal.js"></script>
+</head>
+<body>
+<header><strong>Mock payer portal</strong><a href="claims.html">Claim list</a><a href="claim-form.html">New claim</a></header>
+<div class="fixture">Test fixture for the Aeternix extension. Not a real payer system. Data stays in this browser.</div>
+<main>
+  <div class="panel">
+    <h1>Claims submitted by the hospital</h1>
+    <div style="overflow-x:auto">
+      <table id="claims">
+        <thead><tr>
+          <th>Claim ref</th><th>Patient</th><th>Submitted</th><th>Claimed (Rs)</th><th>Status</th>
+          <th>Approved (Rs)</th><th>Deduction (Rs)</th><th>UTR</th><th>Paid on</th><th>Query</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="muted" id="empty" hidden>No claims yet. Submit one from the claim form, or load the demo cases below.</p>
+  </div>
+
+  <div class="panel sim">
+    <h2>play the payer</h2>
+    <p class="muted">Change a claim the way a payer would. Then reload the list with the extension installed and watch
+       Aeternix pick it up.</p>
+    <div class="grid">
+      <label>Claim<select id="simRef"></select></label>
+      <label>New status<select id="simStatus"></select></label>
+      <label>Approved amount (Rs)<input id="simApproved" type="number" step="0.01"></label>
+      <label>Deduction (Rs)<input id="simDeduction" type="number" step="0.01"></label>
+      <label>UTR (for Payment Done)<input id="simUtr"></label>
+      <label>Paid on<input id="simPaidOn" type="date"></label>
+    </div>
+    <label style="margin-top:12px">Query or rejection text<textarea id="simQuery" rows="2"></textarea></label>
+    <div class="row">
+      <button class="go" id="simApply">Apply payer action</button>
+      <button id="simLoad">Load claims from the demo app</button>
+      <button id="simReset">Clear this fixture</button>
+    </div>
+    <div class="err" id="simErr"></div>
+  </div>
+</main>
+<script>
+const tbody = document.querySelector("#claims tbody");
+
+function render() {
+  const rows = mockLoad();
+  tbody.innerHTML = rows.map((r) => `<tr>
+    <td data-col="ref">${esc(r.ref)}</td><td>${esc(r.patient)}</td><td>${esc(r.submittedOn)}</td>
+    <td class="num">${esc(mockMoney(r.amount))}</td><td data-col="status">${esc(r.status)}</td>
+    <td class="num" data-col="approved">${esc(mockMoney(r.approved))}</td>
+    <td class="num" data-col="deduction">${esc(mockMoney(r.deduction))}</td>
+    <td data-col="utr">${esc(r.utr)}</td><td data-col="paid_on">${esc(r.paidOn)}</td>
+    <td data-col="query">${esc(r.query)}</td></tr>`).join("");
+  document.getElementById("empty").hidden = rows.length > 0;
+  const sel = document.getElementById("simRef");
+  const keep = sel.value;
+  sel.innerHTML = rows.map((r) => `<option value="${esc(r.ref)}">${esc(r.ref)} (${esc(r.patient)})</option>`).join("");
+  if (keep) sel.value = keep;
+}
+
+document.getElementById("simStatus").innerHTML = MOCK_STATUSES.map((s) => `<option>${s}</option>`).join("");
+document.getElementById("simPaidOn").value = mockToday();
+
+document.getElementById("simApply").onclick = () => {
+  const err = document.getElementById("simErr"); err.textContent = "";
+  const rows = mockLoad();
+  const r = rows.find((x) => x.ref === document.getElementById("simRef").value);
+  if (!r) { err.textContent = "Pick a claim first."; return; }
+  const status = document.getElementById("simStatus").value;
+  const approved = document.getElementById("simApproved").value;
+  const deduction = document.getElementById("simDeduction").value;
+  const query = document.getElementById("simQuery").value.trim();
+  if (status === "Query Raised" && !query) { err.textContent = "A query needs its text."; return; }
+  if (status === "Payment Done" && !document.getElementById("simUtr").value.trim()) { err.textContent = "Payment Done needs a UTR."; return; }
+  r.status = status;
+  if (status === "Approved") { r.approved = approved || r.amount; r.deduction = ""; }
+  if (status === "Partially Approved") {
+    if (!approved && !deduction) { err.textContent = "Give the approved amount or the deduction."; return; }
+    r.deduction = deduction || String(Number(r.amount) - Number(approved));
+    r.approved = approved || String(Number(r.amount) - Number(deduction));
+  }
+  r.query = (status === "Query Raised" || status === "Rejected") ? query : "";
+  if (status === "Payment Done") {
+    r.utr = document.getElementById("simUtr").value.trim();
+    r.paidOn = document.getElementById("simPaidOn").value;
+    if (!r.approved) r.approved = r.amount;
+  }
+  mockSave(rows); render();
+};
+
+// Pulls this hospital's open claims from the demo app (same origin, using the app's sign-in) so the
+// fixture holds the same claims the payer would. Only for the demo; a real portal has its own records.
+document.getElementById("simLoad").onclick = async () => {
+  const err = document.getElementById("simErr"); err.textContent = "";
+  let token = null, hospital = null;
+  try { token = localStorage.getItem("aeternix.token"); hospital = localStorage.getItem("aeternix.hospital"); } catch (e) {}
+  if (!token) { err.textContent = "Sign in to the Aeternix app in this browser first."; return; }
+  const headers = { Authorization: `Bearer ${token}` };
+  if (hospital) headers["X-Hospital-Id"] = hospital;
+  const states = { CLAIM_SUBMITTED: "Under Process", CLAIM_QUERY: "Query Raised", APPROVED: "Approved",
+                   PART_APPROVED: "Partially Approved" };
+  try {
+    const res = await fetch(`/api/cases?state=${Object.keys(states).join(",")}`, { headers });
+    if (!res.ok) throw new Error(`The app said ${res.status}.`);
+    const cases = await res.json();
+    const rows = mockLoad();
+    let added = 0;
+    for (const c of cases) {
+      const detail = await (await fetch(`/api/cases/${c.id}`, { headers })).json();
+      const claim = (detail.claims || []).filter((x) => x.stage === "final" && x.portal_ref).pop();
+      const ref = claim ? claim.portal_ref : c.portal_case_id;
+      if (!ref || rows.some((r) => r.ref === ref)) continue;
+      const decision = (detail.decisions || []).filter((d) => d.stage === "final").pop();
+      const q = (detail.queries || []).find((x) => ["open", "drafted", "awaiting_clinician"].includes(x.status));
+      rows.push({ ref, patient: c.beneficiary_name, beneficiaryId: c.beneficiary_ref,
+                  amount: (c.billed_paise || 0) / 100, status: states[c.state],
+                  approved: decision && decision.approved_paise != null ? decision.approved_paise / 100 : "",
+                  deduction: decision ? (decision.deductions || []).reduce((s, d) => s + (d.amount_paise || 0), 0) / 100 || "" : "",
+                  utr: "", paidOn: "", query: c.state === "CLAIM_QUERY" && q ? q.text : "",
+                  submittedOn: claim && claim.submitted_at ? claim.submitted_at.slice(0, 10) : "" });
+      added++;
+    }
+    mockSave(rows); render();
+    err.textContent = `Loaded ${added} claim${added === 1 ? "" : "s"}.`;
+  } catch (e) { err.textContent = String(e.message || e); }
+};
+
+document.getElementById("simReset").onclick = () => { mockSave([]); render(); };
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+/* Mock payer portal. A test fixture: deliberately plain, and nothing like any real payer's branding. */
+:root { --ink: #1d1d1d; --muted: #5d5d5d; --rule: #c9c9c9; --bg: #f2f2f0; --panel: #fff; --warn: #fff6d6; }
+* { box-sizing: border-box; }
+body { margin: 0; font: 14px/1.45 Verdana, Geneva, sans-serif; color: var(--ink); background: var(--bg); }
+header { background: #3b3b3b; color: #fff; padding: 10px 20px; display: flex; gap: 18px; align-items: baseline; flex-wrap: wrap; }
+header strong { font-size: 15px; }
+header a { color: #fff; }
+.fixture { background: var(--warn); border-bottom: 1px solid #e0cf8f; padding: 6px 20px; font-size: 12px; }
+main { max-width: 1100px; margin: 0 auto; padding: 20px; }
+h1 { font-size: 20px; margin: 0 0 12px; }
+h2 { font-size: 16px; margin: 0 0 10px; }
+.panel { background: var(--panel); border: 1px solid var(--rule); padding: 16px; margin-bottom: 18px; }
+.sim { border: 2px dashed #8a8a8a; background: #fafafa; }
+.sim h2::before { content: "Simulator: "; color: var(--muted); font-weight: normal; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { border: 1px solid var(--rule); padding: 6px 8px; text-align: left; vertical-align: top; }
+th { background: #e6e6e3; font-weight: bold; }
+td.num { text-align: right; white-space: nowrap; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px 16px; }
+label { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--muted); }
+input, select, textarea { font: 14px Verdana, Geneva, sans-serif; padding: 5px 6px; border: 1px solid #9a9a9a; color: var(--ink); background: #fff; }
+input[type=file] { border: 0; padding: 0; }
+button { font: bold 13px Verdana, Geneva, sans-serif; padding: 7px 14px; border: 1px solid #333; background: #e9e9e9; cursor: pointer; }
+button.go { background: #2f5d8a; color: #fff; border-color: #24496c; }
+.row { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; margin-top: 12px; }
+.muted { color: var(--muted); font-size: 12px; }
+.err { color: #9b1c1c; font-size: 13px; margin-top: 8px; }
+.ref { font: bold 22px "Courier New", monospace; }
+@media (max-width: 640px) { main { padding: 12px; } table { font-size: 12px; } }

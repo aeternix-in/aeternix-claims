@@ -1,0 +1,43 @@
+# Selectors for the mock payer portal served at /mock-portal (DEMO_MODE only).
+# This file is also the reference example for writing a real portal's selectors.
+portal: mock
+name: Mock payer portal (test fixture)
+status: ready
+match: ["http://localhost:*/mock-portal/*", "http://127.0.0.1:*/mock-portal/*"]
+pages:
+  claim_list:
+    url_contains: "/mock-portal/claims"
+    row: "table#claims tbody tr"
+    cells:
+      portal_ref: "[data-col=ref]"
+      status_text: "[data-col=status]"
+      approved_amount: "[data-col=approved]"
+      deduction_amount: "[data-col=deduction]"
+      payment_ref: "[data-col=utr]"
+      payment_date: "[data-col=paid_on]"
+      query_text: "[data-col=query]"
+  claim_form:
+    url_contains: "/mock-portal/claim-form"
+    fields:
+      beneficiary_ref: "#beneficiaryId"
+      patient_name: "#patientName"
+      referral_no: "#referralNo"
+      admission_date: "#admissionDate"
+      discharge_date: "#dischargeDate"
+      icd10: "#icdCode"
+      diagnosis: "#diagnosis"
+      procedure: "#procedure"
+      package_code: "#packageCode"
+      claim_amount: "#claimAmount"
+      bill_no: "#billNo"
+    uploads:
+      discharge_summary: {selector: "#fileDischarge", doc_types: [discharge_summary]}
+      final_bill: {selector: "#fileBill", doc_types: [final_bill]}
+      investigations: {selector: "#fileInvestigations", doc_types: [investigation_report], multiple: true}
+      other: {selector: "#fileOther", doc_types: [ot_notes, implant_invoice, implant_sticker, referral_letter,
+                                                     emergency_certificate, beneficiary_card], multiple: true}
+    # Highlighted for the person; the extension NEVER clicks it.
+    submit_button: "#submitClaim"
+  confirmation:
+    url_contains: "/mock-portal/submitted"
+    portal_ref: "#claimRef"

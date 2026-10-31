@@ -1,0 +1,33 @@
+# Clinical consistency rules used by the claim scrubber's model layer when no LLM is configured,
+# and as a floor even when one is. Owner: Pragata. STARTER SET for urology and nephrology only.
+# A mismatch produces an AMBER flag that a clinician must clear; it never blocks on its own.
+version: "2026.10.1"
+procedures:
+  - name: PCNL
+    keywords: [pcnl, percutaneous nephrolithotomy]
+    expect_icd10_prefixes: [N20, N21, N13]
+    supporting_investigations: [ct kub, ncct, usg kub, x-ray kub, kub]
+  - name: URSL
+    keywords: [ursl, ureteroscop, ureterorenoscop, rirs]
+    expect_icd10_prefixes: [N20, N21, N13]
+    supporting_investigations: [ct kub, ncct, usg kub, x-ray kub, kub]
+  - name: ESWL
+    keywords: [eswl, shock wave]
+    expect_icd10_prefixes: [N20]
+    supporting_investigations: [ct kub, ncct, usg kub, x-ray kub, kub]
+  - name: TURP
+    keywords: [turp, transurethral resection of prostate]
+    expect_icd10_prefixes: [N40, C61, R33]
+    supporting_investigations: [usg, uroflow, psa, prostate]
+  - name: DJ stenting
+    keywords: [dj stent, double j, ureteric stent]
+    expect_icd10_prefixes: [N13, N20, N21, N28, O26]
+    supporting_investigations: [usg, ct, kub]
+  - name: Haemodialysis
+    keywords: [haemodialysis, hemodialysis, dialysis]
+    expect_icd10_prefixes: [N18, N17, N19]
+    supporting_investigations: [creatinine, renal function, rft, kft, urea]
+  - name: AV fistula
+    keywords: [av fistula, arteriovenous fistula]
+    expect_icd10_prefixes: [N18, Z99]
+    supporting_investigations: [creatinine, renal function, rft, kft, doppler]

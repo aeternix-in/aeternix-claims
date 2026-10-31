@@ -1,0 +1,53 @@
+# Postgres + API + worker. Copy .env.example to .env and fill it in first.
+#   docker compose up --build
+# The API (and web app) is then on http://localhost:8000.
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: aeternix
+      POSTGRES_PASSWORD: ${DB_OWNER_PASSWORD:?set DB_OWNER_PASSWORD in .env}
+      POSTGRES_DB: aeternix
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aeternix -d aeternix"]
+      interval: 5s
+      retries: 30
+
+  # One-shot: create tables as the owner, switch on row-level security, add the demo hospital if asked.
+  migrate:
+    build: .
+    depends_on: { db: { condition: service_healthy } }
+    environment:
+      DATABASE_URL: postgresql+psycopg://aeternix:${DB_OWNER_PASSWORD}@db/aeternix
+      DEMO_MODE: ${DEMO_MODE:-false}
+      SECRET_KEY: ${SECRET_KEY:?set SECRET_KEY in .env}
+      FILE_ENCRYPTION_KEY: ${FILE_ENCRYPTION_KEY:-}
+      DB_APP_PASSWORD: ${DB_APP_PASSWORD:?set DB_APP_PASSWORD in .env}
+    volumes: [files:/data]
+    command: ["sh", "scripts/migrate.sh"]
+    restart: "no"
+
+  api:
+    build: .
+    depends_on: { migrate: { condition: service_completed_successfully } }
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://aeternix_app:${DB_APP_PASSWORD}@db/aeternix
+    volumes: [files:/data]
+    ports: ["8000:8000"]
+    restart: unless-stopped
+
+  # Fires missed claim windows, drafts escalation letters, sends the 8 am digest. Every 60 seconds.
+  worker:
+    build: .
+    depends_on: { migrate: { condition: service_completed_successfully } }
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://aeternix_app:${DB_APP_PASSWORD}@db/aeternix
+    command: ["python", "-m", "app.worker"]
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  files:

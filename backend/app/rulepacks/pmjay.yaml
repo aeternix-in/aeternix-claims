@@ -1,0 +1,63 @@
+# AB PM-JAY (Delhi since April 2025), claims raised on NHA TMS 2.0.
+key: pmjay
+name: AB PM-JAY (NHA TMS 2.0)
+version: "2026.10.1"
+portal: nha_tms
+kind: government
+preauth_required: true
+preauth_waived_if_emergency: false
+
+deadlines:
+  portal_registration: null      # verify the Delhi SHA rule
+  intimation: null
+  preauth_query_reply: null      # verify; NHA does not process a pre-auth while a query is pending with the hospital
+  claim_submission: null         # verify with SHA Delhi before relying on a window
+  claim_query_reply: null
+  claim_query_cutoff: null
+  payment_due:
+    {value: 15, unit: days, from: claim_submitted, label: "Payer should pay (intra-state)",
+     source: "Rajya Sabha reply, 18 Mar 2025: NHA guideline of 15 days intra-state"}
+  payment_due_portability:
+    {value: 30, unit: days, from: claim_submitted, label: "Payer should pay (portability)",
+     source: "Rajya Sabha reply, 18 Mar 2025: 30 days for portability"}
+
+condonation: []
+
+# 1% of the claim amount per week of delay beyond the due date. Hospitals cite their PM-JAY
+# contract (IMA Haryana, Business Standard, Aug 2025); the Himachal Pradesh High Court ordered
+# exactly this rate in July 2026. Check the trigger date against the hospital's own contract.
+interest:
+  rate_per_week_pct: 1.0
+  starts: after_payment_due
+  source: "Business Standard (Aug 2025); HP High Court, M/s Maatri Medicity v. State of HP (2026:HHC:29794)"
+
+# PM-JAY mandates biometric authentication of the beneficiary at registration, treatment and discharge.
+counter_checks:
+  - {key: biometric_registration, label: "Biometric check at registration"}
+  - {key: biometric_preauth, label: "Biometric check before pre-auth"}
+  - {key: biometric_discharge, label: "Biometric check at discharge"}
+
+required_documents:      # STARTER LIST — package-specific documents come from the PM-JAY package master
+  preauth:
+    - {doc: beneficiary_card}
+    - {doc: investigation_report}
+  final:
+    - {doc: discharge_summary}
+    - {doc: final_bill}
+    - {doc: ot_notes, when: surgical}
+    - {doc: implant_invoice, when: implant_used}
+    - {doc: implant_sticker, when: implant_used}
+
+stall_days: {PREAUTH_SUBMITTED: 1, CLAIM_SUBMITTED: 15, APPROVED: 15, PART_APPROVED: 15, PAID_BY_PAYER: 7}
+
+rate_cards:
+  - {file: pmjay_SAMPLE.csv, effective_from: "2025-04-10", sample: true}
+
+sources:
+  - {title: "Rajya Sabha reply on PM-JAY claim payment timelines (Mar 2025)",
+     url: "https://rsdebate.nic.in/bitstream/123456789/759227/1/PQ_267_18032025_U2041_p393_p395.pdf"}
+  - {title: "Business Standard: Haryana PM-JAY dues and the 1% weekly interest clause",
+     url: "https://www.business-standard.com/health/haryana-hospitals-to-continue-ab-pmjay-strike-despite-partial-payment-125080601850_1.html"}
+  - {title: "Verdictum: HP High Court on approved PM-JAY bills (Jul 2026)",
+     url: "https://www.verdictum.in/himachal-high-court/ms-maatri-medicity-orthocare-hospital-v-state-of-himachal-pradesh-ors-and-connected-matters-2026hhc29794-1618362"}
+  - {title: "Nirmitee: PM-JAY on NHCX (biometric checks)", url: "https://nirmitee.io/blog/pmjay-on-nhcx-hmis-claims-guide/"}

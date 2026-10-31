@@ -1,0 +1,35 @@
+key: dgehs
+name: DGEHS (Delhi Government; bills to the DGEHS cell)
+version: "2026.10.1"
+portal: paper
+kind: government
+preauth_required: false
+preauth_waived_if_emergency: true
+
+deadlines:          # No published timelines found. Agree them with the hospital and add here.
+  portal_registration: null
+  intimation: null
+  preauth_query_reply: null
+  claim_submission: null
+  claim_query_reply: null
+  claim_query_cutoff: null
+  payment_due: null
+
+condonation: []
+interest: null
+counter_checks: []
+
+required_documents:   # STARTER LIST
+  preauth:
+    - {doc: beneficiary_card}
+    - {doc: emergency_certificate, when: emergency}
+  final:
+    - {doc: discharge_summary}
+    - {doc: final_bill}
+    - {doc: investigation_report}
+    - {doc: submission_acknowledgement}
+
+stall_days: {CLAIM_SUBMITTED: 45, APPROVED: 60, PART_APPROVED: 60, PAID_BY_PAYER: 10}
+rate_cards: []   # DGEHS uses prevailing CGHS rates; load the same rate list
+sources:
+  - {title: "DGEHS memorandum of agreement", url: "https://dgehs.delhi.gov.in/sites/default/files/DGHS/universal/moa.pdf"}

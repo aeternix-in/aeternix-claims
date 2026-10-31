@@ -1,0 +1,29 @@
+/* Options page and popup. Same palette as the app: white, black, one light blue. */
+:root { --ink: #000; --muted: #4b5563; --rule: #d1d5db; --blue: #d5e8f7; --blue-ink: #1d6fb8; --red: #9b1c1c; --green: #14532d; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: #fff; color: var(--ink); font: 14px/1.5 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+h1, h2 { font-family: Palatino, "Palatino Linotype", "Book Antiqua", Georgia, serif; font-weight: 600; }
+h1 { font-size: 24px; margin: 0 0 4px; }
+h2 { font-size: 17px; margin: 0 0 10px; }
+.muted { color: var(--muted); }
+.small { font-size: 12px; }
+.err { color: var(--red); }
+.ok { color: var(--green); }
+section { border-top: 1px solid var(--ink); padding: 16px 0 6px; margin-top: 18px; }
+label { display: block; font-size: 12px; color: var(--muted); margin: 0 0 10px; }
+input[type=text], input[type=email], input[type=password], input[type=url], select {
+  display: block; width: 100%; margin-top: 4px; font: inherit; color: var(--ink); padding: 8px 10px;
+  border: 1px solid #6b7280; border-radius: 6px; background: #fff; }
+label.check { display: flex; gap: 8px; align-items: center; color: var(--ink); font-size: 14px; }
+button { font: 600 14px/1 inherit; font-family: inherit; padding: 9px 14px; border: 1px solid var(--ink); background: #fff;
+         color: var(--ink); border-radius: 6px; cursor: pointer; }
+button.primary { background: var(--ink); color: #fff; }
+button.link { border: 0; padding: 0; background: none; color: var(--blue-ink); text-decoration: underline; font-weight: 400; }
+button:disabled { opacity: .45; cursor: not-allowed; }
+:focus-visible { outline: 2px solid var(--blue-ink); outline-offset: 2px; }
+table { border-collapse: collapse; width: 100%; }
+th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-size: 12px; color: var(--muted); font-weight: 600; }
+.tag { display: inline-block; font-size: 12px; padding: 1px 8px; border-radius: 9px; border: 1px solid #9ca3af; }
+.tag.ready { background: var(--blue); border-color: var(--blue-ink); }

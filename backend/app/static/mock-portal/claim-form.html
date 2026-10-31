@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>New claim - Mock payer portal</title>
+<link rel="stylesheet" href="portal.css">
+<script src="portal.js"></script>
+</head>
+<body>
+<header><strong>Mock payer portal</strong><a href="claims.html">Claim list</a><a href="claim-form.html">New claim</a></header>
+<div class="fixture">Test fixture for the Aeternix extension. Not a real payer system. Data stays in this browser.</div>
+<main>
+  <form class="panel" id="claimForm" novalidate>
+    <h1>Submit a claim</h1>
+    <div class="grid">
+      <label>Beneficiary ID *<input id="beneficiaryId" name="beneficiaryId"></label>
+      <label>Patient name *<input id="patientName" name="patientName"></label>
+      <label>Referral / permission no.<input id="referralNo" name="referralNo"></label>
+      <label>Admission date *<input id="admissionDate" name="admissionDate" type="date"></label>
+      <label>Discharge date *<input id="dischargeDate" name="dischargeDate" type="date"></label>
+      <label>ICD-10 code<input id="icdCode" name="icdCode"></label>
+      <label>Diagnosis<input id="diagnosis" name="diagnosis"></label>
+      <label>Procedure<input id="procedure" name="procedure"></label>
+      <label>Package code<input id="packageCode" name="packageCode"></label>
+      <label>Claim amount (Rs) *<input id="claimAmount" name="claimAmount" type="number" step="0.01"></label>
+      <label>Hospital bill no.<input id="billNo" name="billNo"></label>
+    </div>
+    <h2 style="margin-top:18px">Documents</h2>
+    <div class="grid">
+      <label>Discharge summary *<input id="fileDischarge" type="file" accept=".pdf,image/*"></label>
+      <label>Final bill *<input id="fileBill" type="file" accept=".pdf,image/*"></label>
+      <label>Investigation reports<input id="fileInvestigations" type="file" multiple accept=".pdf,image/*"></label>
+      <label>Other documents<input id="fileOther" type="file" multiple accept=".pdf,image/*"></label>
+    </div>
+    <div class="row">
+      <button class="go" id="submitClaim" type="submit">Submit claim</button>
+    </div>
+    <div class="err" id="formErr" role="alert"></div>
+  </form>
+</main>
+<script>
+document.getElementById("claimForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const v = (id) => document.getElementById(id).value.trim();
+  const files = (id) => Array.from(document.getElementById(id).files || []).map((f) => f.name);
+  const missing = [];
+  for (const [id, label] of [["beneficiaryId", "Beneficiary ID"], ["patientName", "Patient name"],
+                             ["admissionDate", "Admission date"], ["dischargeDate", "Discharge date"],
+                             ["claimAmount", "Claim amount"]]) if (!v(id)) missing.push(label);
+  if (!files("fileDischarge").length) missing.push("Discharge summary");
+  if (!files("fileBill").length) missing.push("Final bill");
+  if (missing.length) { document.getElementById("formErr").textContent = "Missing: " + missing.join(", ") + "."; return; }
+  const ref = mockRef();
+  const rows = mockLoad();
+  rows.push({ ref, patient: v("patientName"), beneficiaryId: v("beneficiaryId"), amount: Number(v("claimAmount")),
+              status: "Claim Submitted", approved: "", deduction: "", utr: "", paidOn: "", query: "",
+              submittedOn: mockToday(),
+              documents: [...files("fileDischarge"), ...files("fileBill"), ...files("fileInvestigations"), ...files("fileOther")] });
+  mockSave(rows);
+  location.href = "submitted.html?ref=" + encodeURIComponent(ref);
+});
+</script>
+</body>
+</html>

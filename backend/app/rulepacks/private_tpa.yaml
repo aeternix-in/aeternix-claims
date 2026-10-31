@@ -1,0 +1,44 @@
+key: private_tpa
+name: Private insurer or TPA (cashless)
+version: "2026.10.1"
+portal: tpa
+kind: private
+preauth_required: true
+preauth_waived_if_emergency: false
+
+deadlines:
+  portal_registration: null
+  intimation: null
+  preauth_query_reply: null
+  claim_submission: null
+  claim_query_reply: null
+  claim_query_cutoff: null
+  payment_due: null
+  # Payer-side service levels (IRDAI master circular, 29 May 2024). Used to escalate payer delay.
+  payer_cashless_decision:
+    {value: 1, unit: hours, from: preauth_submitted, label: "Insurer should decide the cashless request",
+     source: "IRDAI Master Circular on Health Insurance, 2024"}
+  payer_final_authorisation:
+    {value: 3, unit: hours, from: discharge_request, label: "Insurer should give final authorisation",
+     source: "IRDAI Master Circular on Health Insurance, 2024"}
+
+condonation: []
+interest: null
+counter_checks: []
+
+required_documents:
+  preauth:
+    - {doc: beneficiary_card}
+    - {doc: preauth_form}
+    - {doc: investigation_report}
+  final:
+    - {doc: discharge_summary}
+    - {doc: final_bill}
+    - {doc: implant_invoice, when: implant_used}
+    - {doc: implant_sticker, when: implant_used}
+
+stall_days: {PREAUTH_SUBMITTED: 1, CLAIM_SUBMITTED: 30, APPROVED: 30, PART_APPROVED: 30, PAID_BY_PAYER: 7}
+rate_cards: []   # load the hospital's negotiated tariff per insurer or TPA
+sources:
+  - {title: "Moneylife: IRDAI 1-hour and 3-hour cashless rules",
+     url: "https://moneylife.in/article/health-insurance-decide-cashless-request-in-1-hour-provide-final-authorisation-for-discharge-within-3-hours-says-irdai/74269.html"}

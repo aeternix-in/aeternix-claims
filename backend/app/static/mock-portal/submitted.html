@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claim submitted - Mock payer portal</title>
+<link rel="stylesheet" href="portal.css">
+<script src="portal.js"></script>
+</head>
+<body>
+<header><strong>Mock payer portal</strong><a href="claims.html">Claim list</a><a href="claim-form.html">New claim</a></header>
+<div class="fixture">Test fixture for the Aeternix extension. Not a real payer system. Data stays in this browser.</div>
+<main>
+  <div class="panel">
+    <h1>Claim submitted</h1>
+    <p>Claim reference</p>
+    <p class="ref" id="claimRef"></p>
+    <p id="docs" class="muted"></p>
+    <p><a href="claims.html">Go to the claim list</a></p>
+  </div>
+</main>
+<script>
+const ref = new URLSearchParams(location.search).get("ref") || "";
+document.getElementById("claimRef").textContent = ref;
+const row = mockLoad().find((r) => r.ref === ref);
+if (row && row.documents) document.getElementById("docs").textContent =
+  `${row.documents.length} document${row.documents.length === 1 ? "" : "s"} received: ${row.documents.join(", ")}`;
+</script>
+</body>
+</html>

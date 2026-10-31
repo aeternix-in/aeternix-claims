@@ -1,0 +1,8 @@
+# SAMPLE DATA - NOT THE PM-JAY HEALTH BENEFIT PACKAGE MASTER. Codes and amounts are invented.
+# Replace with the HBP package master applicable in Delhi (Setup > Rate cards).
+code,description,rate_inr,los_days,category
+SAMPLE-HBP-UR001,PCNL package,40000,4,package
+SAMPLE-HBP-UR002,URSL package,28000,2,package
+SAMPLE-HBP-UR003,TURP package,34000,3,package
+SAMPLE-HBP-NE001,Haemodialysis per session,1700,1,package
+SAMPLE-IMP-001,DJ stent (implant),3500,,implant

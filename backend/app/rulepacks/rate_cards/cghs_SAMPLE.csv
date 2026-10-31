@@ -1,0 +1,18 @@
+# SAMPLE DATA - NOT THE CGHS RATE LIST. Codes and amounts are invented for testing and demos.
+# Replace with the official CGHS 2025 rates for the hospital's city and NABH status (Setup > Rate cards).
+code,description,rate_inr,los_days,category
+SAMPLE-URO-001,PCNL (percutaneous nephrolithotomy) package,45000,4,package
+SAMPLE-URO-002,URSL (ureteroscopic lithotripsy) package,32000,2,package
+SAMPLE-URO-003,TURP (transurethral resection of prostate) package,38000,3,package
+SAMPLE-URO-004,DJ stent insertion,12000,1,package
+SAMPLE-URO-005,DJ stent removal (cystoscopic),6000,1,package
+SAMPLE-URO-006,Diagnostic cystoscopy,5000,1,package
+SAMPLE-URO-007,ESWL per session,9000,1,package
+SAMPLE-NEP-001,Haemodialysis per session,1800,1,package
+SAMPLE-NEP-002,AV fistula creation,15000,2,package
+SAMPLE-NEP-003,Temporary dialysis catheter insertion,4500,1,package
+SAMPLE-IMP-001,DJ stent (implant),3500,,implant
+SAMPLE-RAD-001,CT KUB,2500,,investigation
+SAMPLE-RAD-002,USG KUB,800,,investigation
+SAMPLE-LAB-001,Renal function test,450,,investigation
+SAMPLE-ROOM-001,Ward room rent per day,1500,,room

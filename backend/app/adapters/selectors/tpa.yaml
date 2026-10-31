@@ -1,0 +1,11 @@
+# Template for an insurer or TPA portal. Per portal: copy to <key>.yaml, set `match` to its address,
+# register <key> in ADAPTERS (app/adapters/__init__.py), set the payer's portal to <key> in Setup,
+# and capture the selectors (docs/ADAPTERS.md).
+portal: tpa
+name: Insurer / TPA portal (template)
+status: not_captured
+match: []
+pages:
+  claim_list: {url_contains: null, row: null, cells: {}}
+  claim_form: {url_contains: null, fields: {}, uploads: {}, submit_button: null}
+  confirmation: {url_contains: null, portal_ref: null}

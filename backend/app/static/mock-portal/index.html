@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mock payer portal</title>
+<link rel="stylesheet" href="portal.css">
+</head>
+<body>
+<header><strong>Mock payer portal</strong><a href="claims.html">Claim list</a><a href="claim-form.html">New claim</a></header>
+<div class="fixture">Test fixture for the Aeternix extension. Not a real payer system. Data stays in this browser.</div>
+<main>
+  <div class="panel">
+    <h1>What this is</h1>
+    <p>A stand-in for a payer portal, so the extension can be shown and tested without touching a real one.
+       It has the three pages the extension works on:</p>
+    <ul>
+      <li><a href="claims.html">Claim list</a>: the extension reads each row's status and sends it to Aeternix.</li>
+      <li><a href="claim-form.html">Claim form</a>: the extension fills the fields and attaches the documents. You press Submit.</li>
+      <li>Confirmation page: the extension reads the claim reference so Aeternix can record the submission.</li>
+    </ul>
+    <p class="muted">The claim list has a simulator panel for playing the payer: raise a query, approve, deduct, pay.
+       The selectors for this fixture are in <code>backend/app/adapters/selectors/mock.yaml</code>, which is also the
+       worked example for capturing a real portal.</p>
+  </div>
+</main>
+</body>
+</html>

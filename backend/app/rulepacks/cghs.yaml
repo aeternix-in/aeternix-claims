@@ -1,0 +1,66 @@
+# CGHS pensioner credit bills, processed on NHA TMS 2.0 (provider.nha.gov.in) since 13 Oct 2025.
+# Owner: Pragata (clinical) + Shashank (process). Every change is reviewed like code.
+key: cghs
+name: CGHS (pensioners, NHA TMS 2.0)
+version: "2026.10.1"
+portal: nha_tms
+kind: government
+preauth_required: true
+preauth_waived_if_emergency: true   # CGHS emergencies are auto-approved by NHA (OM 16 Jun 2021, para 16)
+
+deadlines:
+  portal_registration:
+    {value: 48, unit: hours, from: admission, label: "Register the case on the portal (BIS)",
+     source: "CGHS OM 26 Apr 2024, Part A"}
+  intimation:
+    {value: 48, unit: hours, from: portal_registration, label: "Send intimation / pre-auth",
+     source: "CGHS OM 26 Apr 2024, Part A"}
+  preauth_query_reply:
+    {value: 48, unit: hours, from: query_raised, label: "Reply to the pre-auth query",
+     source: "CGHS OM 26 Apr 2024, Part A"}
+  claim_submission:
+    {value: 15, unit: days, from: discharge, label: "Submit the claim (15 days incl. holidays)",
+     source: "CGHS OM 26 Apr 2024, Part A"}
+  claim_query_reply:
+    {value: 15, unit: days, from: query_raised, label: "Reply to the claim query (normally 15 days)",
+     source: "CGHS OM 26 Apr 2024, Part A"}
+  claim_query_cutoff:
+    {value: 90, unit: days, from: query_raised,
+     label: "Last day: after this the bill is settled or rejected on documents already there",
+     source: "CGHS OM 26 Apr 2024, Part A"}
+  payment_due: null   # No published payment timeline found. Track and escalate on stall_days instead.
+
+condonation:
+  - {from_day: 16, to_day: 45, authority: "Additional Director, CGHS (city/zone)", source: "CGHS OM 26 Apr 2024, Part B(i)"}
+  - {from_day: 46, to_day: null, authority: "Director, CGHS", source: "CGHS OM 26 Apr 2024, Part B(ii)"}
+
+interest: null
+counter_checks: []
+
+# STARTER LIST. Verify against the current document checklist shown on TMS 2.0
+# (the OM requires HCOs to enclose a checklist; see Part C.3).
+required_documents:
+  preauth:
+    - {doc: referral_letter, unless: emergency}
+    - {doc: emergency_certificate, when: emergency}
+    - {doc: beneficiary_card}
+  final:
+    - {doc: discharge_summary}
+    - {doc: final_bill}
+    - {doc: investigation_report}
+    - {doc: ot_notes, when: surgical}
+    - {doc: implant_invoice, when: implant_used}
+    - {doc: implant_sticker, when: implant_used}
+
+stall_days: {PREAUTH_SUBMITTED: 2, CLAIM_SUBMITTED: 30, APPROVED: 30, PART_APPROVED: 30, PAID_BY_PAYER: 7}
+
+rate_cards:
+  # The official CGHS 2025 rate list must be loaded per city / NABH status (Setup > Rate cards).
+  - {file: cghs_SAMPLE.csv, effective_from: "2025-10-13", sample: true}
+
+sources:
+  - {title: "CGHS OM: revised timelines for bill submission on NHA portal (26 Apr 2024)",
+     url: "https://www.gconnect.in/orders-in-brief/cghs/revised-timelines-submission-hospital-bills-health-care-organizations-cghs-processing-nha-portal.html"}
+  - {title: "CGHS OM: transition to revised CGHS rates 2025 and TMS 2.0 (12 Oct 2025)",
+     url: "https://www.staffnews.in/2025/10/transition-to-revised-cghs-rates-2025-and-tms-2-0.html"}
+  - {title: "CGHS OM: onboarding of HCOs on NHA IT platform (16 Jun 2021)", url: "https://www.staffnews.in/?p=118301"}

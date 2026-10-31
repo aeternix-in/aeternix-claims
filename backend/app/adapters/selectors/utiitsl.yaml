@@ -1,0 +1,9 @@
+# UTI-ITSL ECHS bill processing portal. STATUS: NOT CAPTURED (see docs/ADAPTERS.md).
+portal: utiitsl
+name: UTI-ITSL ECHS
+status: not_captured
+match: ["https://echsbpa.utiitsl.com/*"]
+pages:
+  claim_list: {url_contains: null, row: null, cells: {}}
+  claim_form: {url_contains: null, fields: {}, uploads: {}, submit_button: null}
+  confirmation: {url_contains: null, portal_ref: null}

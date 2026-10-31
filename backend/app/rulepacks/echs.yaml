@@ -1,0 +1,40 @@
+key: echs
+name: ECHS (UTI-ITSL bill processing)
+version: "2026.10.1"
+portal: utiitsl
+kind: government
+preauth_required: false        # referral (EIR) from the polyclinic, then intimation; no pre-auth step modelled
+preauth_waived_if_emergency: true
+
+deadlines:
+  portal_registration: null
+  intimation:
+    {value: 48, unit: hours, from: admission, label: "Inform the ECHS polyclinic",
+     source: "TaxGuru (secondary source) — verify with the desk"}
+  preauth_query_reply: null
+  claim_submission:
+    {value: 7, unit: days, from: discharge, label: "Submit the bill",
+     source: "TaxGuru (secondary source) — verify with the desk"}
+  claim_query_reply: null
+  claim_query_cutoff: null
+  payment_due: null
+
+condonation: []
+interest: null
+counter_checks: []
+
+required_documents:
+  preauth:
+    - {doc: beneficiary_card}
+    - {doc: referral_letter, unless: emergency}
+    - {doc: emergency_certificate, when: emergency}
+  final:
+    - {doc: final_bill}
+    - {doc: discharge_summary}
+    - {doc: investigation_report}
+    - {doc: implant_invoice, when: implant_used}
+
+stall_days: {CLAIM_SUBMITTED: 30, APPROVED: 45, PART_APPROVED: 45, PAID_BY_PAYER: 10}
+rate_cards: []   # ECHS follows CGHS rates; load the same rate list here
+sources:
+  - {title: "TaxGuru: ECHS and CGHS receivable process", url: "https://taxguru.in/finance/healthcare-system-receivable-management.html"}
