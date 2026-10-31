@@ -15,4 +15,5 @@ openpyxl==3.1.5
 python-multipart==0.0.32
 reportlab==5.0.1
 tzdata; sys_platform == "win32"
+psycopg[binary]
 # OCR also needs the tesseract binary on the machine (apt install tesseract-ocr; it is in the Docker image).
